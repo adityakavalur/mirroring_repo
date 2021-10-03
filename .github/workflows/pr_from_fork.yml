@@ -1,0 +1,24 @@
+name: Fork PR
+on: workflow_dispatch
+jobs:
+  forkpr:
+    runs-on: ubuntu-latest
+    env:
+      SOURCE_REPO: adityakavalur/source_repo
+      TARGET_REPO: "https://gitlab.com/akavalur/target_repo.git"      
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          repository: ${{ env.SOURCE_REPO }}
+          token: ${{ secrets.SOURCE_PAT }}
+          fetch-depth: 0
+      - name: Fork PR testing on external Gitlab
+        uses: adityakavalur/github-gitlab-ci@main
+        with:
+          args: ${{ env.TARGET_REPO }}
+        env:
+          TARGET_PAT: ${{ secrets.TARGET_PAT }}
+          SOURCE_PAT: ${{ secrets.SOURCE_PAT }}
+          GITHUB_TOKEN: ${{ secrets.SOURCE_PAT }}
+          REPO_EVENT_TYPE: fork_pr
+          APPROVAL_STRING: clonetogitlab
